@@ -1,0 +1,53 @@
+# coding: utf8
+# try something like
+def index():
+    return dict(message="ChiPy Questionnaire")
+
+@auth.requires_login()
+def my_questionnaire():
+    record = db.questionnaire(db.questionnaire.auth_user_ref==auth.user.id)
+    if record:
+        questionnaire = SQLFORM(db.questionnaire, record)
+    else:
+        questionnaire = SQLFORM(db.questionnaire)
+    if questionnaire.process().accepted:
+       # if not an questionnaire status record - create one
+       redirect(URL('questionnaire', 'thank_you'))
+    elif questionnaire.errors:
+       response.flash = 'There were errors with the submission.'
+    return locals()
+
+def thank_you():
+    return dict(message="Thanks for completing an application!")
+
+@auth.requires_membership('venue_manager')
+def summary():
+    questionnaires = db(db.questionnaire).select()
+    return locals()
+
+@auth.requires_membership('venue_manager')
+def get_form_for_table_name(table_name, is_readonly, upload_info=URL('default', 'download')):
+    record = db[table_name](db[table_name].auth_user_ref==request.args(0))
+    if record:
+        return SQLFORM(db[table_name], record, readonly=is_readonly,comments=False, upload=upload_info)
+    return None
+
+@auth.requires_membership('venue_manager')
+def information():
+    if request.args(0):
+        questionnaire = get_form_for_table_name('questionnaire', True)
+    else:
+        redirect(URL('default', 'error'))
+    return locals()
+
+@auth.requires_membership('venue_manager')
+def update_information():
+    if request.args(0):
+        questionnaire = get_form_for_table_name('questionnaire', False)
+        if questionnaire.process().accepted:
+            redirect(URL('questionnaire', 'information', args=[request.args(0)]))
+        elif questionnaire.errors:
+            response.flash="There were errors with your submission."
+    else:
+        redirect(URL('default', 'error'))
+    return locals()

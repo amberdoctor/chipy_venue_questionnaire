@@ -1,0 +1,9 @@
+*.pyc
+cache
+databases
+errors
+sessions
+*.log
+*.bak
+uploads
+routes.examples.py

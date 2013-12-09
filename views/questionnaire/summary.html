@@ -1,0 +1,20 @@
+{{extend 'layout.html'}}
+<h3>Summary</h3>
+{{if 'questionnaires' in globals():}}
+<table>
+    <tr>
+        <th>User</th>
+        <th>Name</th>
+        <th>Address</th>
+        <th>Phone Number</th>
+    </tr>
+    {{for questionnaire in questionnaires:}}
+    <tr>
+        <td>{{=A(questionnaire.auth_user_ref, _href=URL('questionnaire', 'information', args=[questionnaire.auth_user_ref]))}}</td>
+        <td>{{=questionnaire.question001}}</td>
+        <td>{{=questionnaire.question002}}</td>
+        <td>{{=questionnaire.question003}}</td>
+    </tr>
+    {{pass}}
+</table>
+{{pass}}

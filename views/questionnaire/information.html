@@ -1,0 +1,5 @@
+{{extend 'layout.html'}}
+<h3>Venue Information</h3>
+<p>
+{{=A('Click here to update information.', _href=URL('questionnaire', 'update_information', args=[request.args(0)]))}}</p>
+{{include 'include/questionnaire.html'}}
